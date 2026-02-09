@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Opening Mobo App…</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Small UX improvement -->
+  <meta http-equiv="refresh" content="6;url=https://mobo.io/apps">
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<p>Redirecting…</p>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const app = params.get('app');
+
+  const APP_MAP = {
+    fullsuite: {
+      ios: "https://apps.apple.com/app/id6743953967",
+      android: "https://play.google.com/store/apps/details?id=com.cybrosys.odoo_mobile_community",  
+      web: "https://www.cybrosys.com/mobo/#apps"
+    }
+  };
+
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+
+  const isIOS = /iPad|iPhone|iPod/.test(ua);
+  const isAndroid = /Android/.test(ua);
+
+  const appData = APP_MAP[app];
+
+  if (!appData) {
+    window.location.href = "https://www.cybrosys.com/mobo/#apps";
+  } else if (isIOS) {
+    window.location.href = appData.ios;
+  } else if (isAndroid) {
+    window.location.href = appData.android;
+  } else {
+    window.location.href = appData.web;
+  }
+</script>
+
+</body>
+</html>
