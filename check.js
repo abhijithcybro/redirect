@@ -128,8 +128,9 @@ const PAGE_CASES = [
   ['iPadOS 17 (Mac UA)', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Version/17.5 Safari/605.1.15', 'MacIntel', 5, '', IOS_URL],
   ['macOS desktop',      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0 Safari/537.36', 'MacIntel', 0, '', WEB_URL],
   ['Windows desktop',    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/126.0 Safari/537.36', 'Win32', 0, '', WEB_URL],
-  ['unknown ?app value', 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X)', 'iPhone', 5, '?app=nope', WEB_URL],
-  ['no ?app param',      'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X)', 'iPhone', 5, '', IOS_URL],
+  ['bare URL',           'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X)', 'iPhone', 5, '', IOS_URL],
+  // A printed QR may carry campaign params; they must not affect routing.
+  ['stray query params', 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X)', 'iPhone', 5, '?utm_source=flyer&app=nope', IOS_URL],
 ];
 for (const [name, ua, plat, touch, search, want] of PAGE_CASES) {
   const { replaced, els } = runPage(ua, plat, touch, search);

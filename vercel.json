@@ -11,7 +11,7 @@
     {
       "source": "/",
       "has": [{ "type": "header", "key": "user-agent", "value": ".*(iPhone|iPad|iPod).*" }],
-      "destination": "https://apps.apple.com/app/id6743953967",
+      "destination": "https://apps.apple.com/us/developer/cybrosys-technologies/id1805306445",
       "permanent": false
     },
     {
@@ -23,7 +23,7 @@
     {
       "source": "/app",
       "has": [{ "type": "header", "key": "user-agent", "value": ".*(iPhone|iPad|iPod).*" }],
-      "destination": "https://apps.apple.com/app/id6743953967",
+      "destination": "https://apps.apple.com/us/developer/cybrosys-technologies/id1805306445",
       "permanent": false
     }
   ],

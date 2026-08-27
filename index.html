@@ -29,18 +29,12 @@
 <script>
   // Runs before <body> is parsed - this is what keeps the page invisible.
   (function () {
+    // All three are listings of every Mobo app, not one specific app.
     var WEB_FALLBACK = "https://www.cybrosys.com/mobo/#apps";
-
-    var APP_MAP = {
-      fullsuite: {
-        ios: "https://apps.apple.com/us/developer/cybrosys-technologies/id1805306445",
-        android: "https://play.google.com/store/apps/dev?id=7163004064816759344&hl=en_IN",
-        web: WEB_FALLBACK
-      }
-    };
+    var IOS_STORE = "https://apps.apple.com/us/developer/cybrosys-technologies/id1805306445";
+    var PLAY_STORE = "https://play.google.com/store/apps/dev?id=7163004064816759344&hl=en_IN";
 
     var params = new URLSearchParams(window.location.search);
-    var appData = APP_MAP[params.get("app") || "fullsuite"];
 
     var ua = navigator.userAgent || navigator.vendor || "";
     var platform = navigator.platform || "";
@@ -50,8 +44,7 @@
                 (/Mac/.test(ua + platform) && navigator.maxTouchPoints > 1);
     var isAndroid = /Android/.test(ua);
 
-    var target = WEB_FALLBACK;
-    if (appData) target = isIOS ? appData.ios : isAndroid ? appData.android : appData.web;
+    var target = isIOS ? IOS_STORE : isAndroid ? PLAY_STORE : WEB_FALLBACK;
 
     // Exposed for the fallback button at the end of <body>.
     window.__target = target;
