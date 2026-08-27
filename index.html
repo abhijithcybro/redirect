@@ -1,67 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Opening Mobo App…</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Welcome to Mobo</title>
+<meta name="robots" content="noindex">
 
-  <!-- Fallback if JS is disabled or the script fails -->
-  <meta http-equiv="refresh" content="6;url=https://www.cybrosys.com/mobo/#apps">
+<!--
+  This page is designed NOT to be seen.
 
-  <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #ffffff;
-      color: #222;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      text-align: center;
+  Layer 1 - vercel.json redirects iPhone and Android at the edge, before any
+            HTML is sent. That covers virtually every scan of the printed QR.
+  Layer 2 - the script below runs in <head>, before the body is parsed, so the
+            redirect fires without the page ever painting. This exists only for
+            what the edge cannot resolve from the User-Agent: iPadOS 13+, which
+            reports a Macintosh UA and needs navigator.maxTouchPoints to tell it
+            apart from a real Mac.
+  Layer 3 - the markup below is the splash that shows only if both fail, or for
+            the instant before a slow store app opens.
+
+  Store URLs live here AND in vercel.json. `node check.js` verifies they agree.
+  Add ?preview=1 to hold the page still and look at the design.
+-->
+
+<!-- No-JS safety net. Cannot be device-aware, so it targets the web page. -->
+<meta http-equiv="refresh" content="2;url=https://www.cybrosys.com/mobo/#apps">
+
+<script>
+  // Runs before <body> is parsed - this is what keeps the page invisible.
+  (function () {
+    var WEB_FALLBACK = "https://www.cybrosys.com/mobo/#apps";
+
+    var APP_MAP = {
+      fullsuite: {
+        ios: "https://apps.apple.com/us/developer/cybrosys-technologies/id1805306445",
+        android: "https://play.google.com/store/apps/dev?id=7163004064816759344&hl=en_IN",
+        web: WEB_FALLBACK
+      }
+    };
+
+    var params = new URLSearchParams(window.location.search);
+    var appData = APP_MAP[params.get("app") || "fullsuite"];
+
+    var ua = navigator.userAgent || navigator.vendor || "";
+    var platform = navigator.platform || "";
+
+    // iPadOS 13+ reports a Macintosh UA; touch support is the only tell.
+    var isIOS = /iPad|iPhone|iPod/.test(ua) ||
+                (/Mac/.test(ua + platform) && navigator.maxTouchPoints > 1);
+    var isAndroid = /Android/.test(ua);
+
+    var target = WEB_FALLBACK;
+    if (appData) target = isIOS ? appData.ios : isAndroid ? appData.android : appData.web;
+
+    // Exposed for the fallback button at the end of <body>.
+    window.__target = target;
+    window.__preview = params.get("preview") === "1";
+
+    // replace() keeps this out of history, so Back returns to the camera app.
+    if (!window.__preview) window.location.replace(target);
+  })();
+</script>
+
+<style>
+  :root {
+    --brand: #c03355;
+    --brand-deep: #97253f;
+    --bg: #fffafb;
+    --glow: #fbe7ec;
+    --text: #1d1216;
+    --muted: #7c6870;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --brand: #e2718c;
+      --brand-deep: #c03355;
+      --bg: #140d10;
+      --glow: #2c1620;
+      --text: #f7eff1;
+      --muted: #b09aa2;
     }
-    a { color: #4a45c8; }
-  </style>
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+    background: var(--bg);
+    background-image: radial-gradient(ellipse 70% 50% at 50% 0%, var(--glow), transparent 70%);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Swap this for your real logo when you have one. */
+  .mark {
+    width: 64px; height: 64px;
+    margin: 0 auto 22px;
+    border-radius: 18px;
+    background: linear-gradient(150deg, var(--brand), var(--brand-deep));
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 24px -10px var(--brand);
+  }
+  .mark svg { width: 32px; height: 32px; }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 650;
+    letter-spacing: -.02em;
+    margin: 0 0 8px;
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: 0;
+    max-width: 30ch;
+  }
+
+  .dots { display: inline-flex; gap: 4px; margin-left: 2px; vertical-align: middle; }
+  .dots i {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--brand);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  .dots i:nth-child(2) { animation-delay: .16s; }
+  .dots i:nth-child(3) { animation-delay: .32s; }
+
+  @keyframes pulse {
+    0%, 60%, 100% { opacity: .25; }
+    30%           { opacity: 1; }
+  }
+
+  /* Only revealed if the redirect has not happened - see the script below. */
+  .rescue {
+    display: none;
+    margin-top: 26px;
+    padding: 12px 26px;
+    border-radius: 999px;
+    background: var(--brand);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .rescue:active { filter: brightness(.93); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dots i { animation: none; opacity: .6; }
+  }
+</style>
 </head>
 <body>
 
-<p>Redirecting…<br><a id="manual" href="https://www.cybrosys.com/mobo/#apps">Tap here if nothing happens</a></p>
+<main>
+  <div class="mark" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3v12"/>
+      <path d="m7 10 5 5 5-5"/>
+      <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+    </svg>
+  </div>
+
+  <h1>Welcome to Mobo</h1>
+  <p role="status" aria-live="polite">
+    Opening your app store<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+  </p>
+
+  <a class="rescue" id="rescue" href="https://www.cybrosys.com/mobo/#apps">Continue</a>
+</main>
 
 <script>
-  const WEB_FALLBACK = "https://www.cybrosys.com/mobo/#apps";
+  (function () {
+    var rescue = document.getElementById("rescue");
+    rescue.href = window.__target;
 
-  const APP_MAP = {
-    fullsuite: {
-      ios: "https://apps.apple.com/app/id6743953967",
-      android: "https://play.google.com/store/apps/dev?id=7163004064816759344&hl=en_IN",
-      web: WEB_FALLBACK
+    // If we are still on this page after a moment, the redirect was blocked
+    // (in-app browser, strict privacy setting). Give the visitor a way out.
+    if (!window.__preview) {
+      setTimeout(function () { rescue.style.display = "inline-block"; }, 1200);
+    } else {
+      rescue.style.display = "inline-block";
     }
-  };
-
-  const params = new URLSearchParams(window.location.search);
-  // default to fullsuite so a bare link still lands somewhere useful
-  const app = params.get('app') || 'fullsuite';
-
-  const ua = navigator.userAgent || navigator.vendor || window.opera || "";
-  const platform = navigator.platform || "";
-
-  // iPadOS 13+ reports itself as a Mac, so check for touch support too
-  const isIOS = /iPad|iPhone|iPod/.test(ua) ||
-                (/Mac/.test(ua + platform) && navigator.maxTouchPoints > 1);
-  const isAndroid = /Android/.test(ua);
-
-  const appData = APP_MAP[app];
-
-  let target = WEB_FALLBACK;
-  if (appData) {
-    if (isIOS) target = appData.ios;
-    else if (isAndroid) target = appData.android;
-    else target = appData.web;
-  }
-
-  document.getElementById('manual').href = target;
-  // replace() keeps this page out of history, so Back returns to the scanner/app
-  window.location.replace(target);
+  })();
 </script>
 
 </body>

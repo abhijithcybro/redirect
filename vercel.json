@@ -1,13 +1,39 @@
 {
-  "rewrites": [
-    { "source": "/app", "destination": "/index.html" }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+
+  "redirects": [
+    {
+      "source": "/",
+      "has": [{ "type": "header", "key": "user-agent", "value": ".*Android.*" }],
+      "destination": "https://play.google.com/store/apps/dev?id=7163004064816759344&hl=en_IN",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "header", "key": "user-agent", "value": ".*(iPhone|iPad|iPod).*" }],
+      "destination": "https://apps.apple.com/app/id6743953967",
+      "permanent": false
+    },
+    {
+      "source": "/app",
+      "has": [{ "type": "header", "key": "user-agent", "value": ".*Android.*" }],
+      "destination": "https://play.google.com/store/apps/dev?id=7163004064816759344&hl=en_IN",
+      "permanent": false
+    },
+    {
+      "source": "/app",
+      "has": [{ "type": "header", "key": "user-agent", "value": ".*(iPhone|iPad|iPod).*" }],
+      "destination": "https://apps.apple.com/app/id6743953967",
+      "permanent": false
+    }
   ],
+
+  "rewrites": [{ "source": "/app", "destination": "/index.html" }],
+
   "headers": [
     {
       "source": "/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
-      ]
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
     }
   ]
 }

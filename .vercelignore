@@ -1,0 +1,7 @@
+# Verification tooling - needed in the repo, not on the public site.
+# Without this, Vercel serves it as a static file at /check.js
+check.js
+
+# QR artwork, if you keep a copy here alongside the code
+*.png
+*.svg
